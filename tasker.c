@@ -10,28 +10,6 @@ struct Task {
 struct Task tasks[5];
 int tasks_length;
 
-void display_task() {
-   if (tasks_length < 1) {
-      printf("Empty Tasks\n");
-   } else {
-      for (int i = 0; i < tasks_length; i++) {
-         printf("%d. [%c] %s\n", i + 1, tasks[i].done ? 'x' : ' ', tasks[i].name);
-      }
-   }
-}
-
-void new_task() {
-   char name[10];
-
-   printf("Enter Name = ");
-   scanf("%s", name);
-
-   strcpy(tasks[tasks_length].name, name);
-   tasks[tasks_length].done = false;
-
-   tasks_length++;
-}
-
 int select_id() {
    int selected_id;
 
@@ -41,13 +19,57 @@ int select_id() {
    return selected_id;
 }
 
+void clear_screen() {
+   printf("Press any key to continue\n");
+   getchar();
+   system("clear");
+}
+
+void display_task() {
+   system("clear");
+
+   if (tasks_length < 1) {
+      printf("Empty Tasks\n");
+   } else {
+      for (int i = 0; i < tasks_length; i++) {
+         printf("%d. [%c] %s\n", i + 1, tasks[i].done ? 'x' : ' ', tasks[i].name);
+      }
+   }
+
+   getchar();
+}
+
+void new_task() {
+   system("clear");
+
+   char name[10];
+
+   printf("Enter Name = ");
+   scanf("%s", name);
+
+   strcpy(tasks[tasks_length].name, name);
+   tasks[tasks_length].done = false;
+
+   tasks_length++;
+
+   printf("Task created succesfully\n");
+   getchar();
+}
+
 void toggle_task() {
+   system("clear");
+
    int selected_id = select_id();
 
    tasks[selected_id - 1].done = !tasks[selected_id - 1].done;
+
+   printf("Task updated successfully\n");
+   getchar();
 }
 
 void edit_task() {
+   system("clear");
+
    int selected_id = select_id();
    char name[10];
 
@@ -55,9 +77,14 @@ void edit_task() {
    scanf("%s", name);
 
    strcpy(tasks[selected_id - 1].name, name);
+
+   printf("Task updated successfully\n");
+   getchar();
 }
 
 void delete_task() {
+   system("clear");
+
    int selected_id = select_id();
 
    for (int i = selected_id - 1; i < tasks_length - 1; i++) {
@@ -65,10 +92,15 @@ void delete_task() {
    }
 
    tasks_length--;
+
+   printf("Task deleted successfully\n");
+   getchar();
 }
 
 int main() {
-   while (1) {
+   system("clear");
+
+   while (1) {  
       int selected_menu;
 
       printf("Menu List:\n1. Display Tasks\n2. New Task\n3. Toggle Done\n4. Edit Task\n5. Delete Task\n6. Exit\n");
@@ -83,21 +115,35 @@ int main() {
       switch (selected_menu) {
          case 1:
             display_task();
+            clear_screen();
+
             break;
          case 2:
             new_task();
+            clear_screen();
+
             break;
          case 3:
             toggle_task();
+            clear_screen();
+
             break;
          case 4:
             edit_task();
+            clear_screen();
+
             break;
          case 5:
             delete_task();
+            clear_screen();
+
             break;
          default:
+            system("clear");
             printf("Invalid Menu\n");
+            getchar();
+            clear_screen();
+
             break;
       }
    }
