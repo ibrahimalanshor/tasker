@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 
 struct Task {
    char name[10];
@@ -20,7 +21,8 @@ int select_id() {
 }
 
 void clear_screen() {
-   printf("Press any key to continue\n");
+   printf("Press any key to continue ");
+   while ((getchar()) != '\n');
    getchar();
    system("clear");
 }
@@ -35,8 +37,6 @@ void display_task() {
          printf("%d. [%c] %s\n", i + 1, tasks[i].done ? 'x' : ' ', tasks[i].name);
       }
    }
-
-   getchar();
 }
 
 void new_task() {
@@ -53,7 +53,6 @@ void new_task() {
    tasks_length++;
 
    printf("Task created succesfully\n");
-   getchar();
 }
 
 void toggle_task() {
@@ -64,7 +63,6 @@ void toggle_task() {
    tasks[selected_id - 1].done = !tasks[selected_id - 1].done;
 
    printf("Task updated successfully\n");
-   getchar();
 }
 
 void edit_task() {
@@ -79,7 +77,6 @@ void edit_task() {
    strcpy(tasks[selected_id - 1].name, name);
 
    printf("Task updated successfully\n");
-   getchar();
 }
 
 void delete_task() {
@@ -94,7 +91,6 @@ void delete_task() {
    tasks_length--;
 
    printf("Task deleted successfully\n");
-   getchar();
 }
 
 int main() {
@@ -141,7 +137,6 @@ int main() {
          default:
             system("clear");
             printf("Invalid Menu\n");
-            getchar();
             clear_screen();
 
             break;
