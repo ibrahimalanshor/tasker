@@ -20,6 +20,25 @@ int select_id() {
    return selected_id;
 }
 
+char *input_name() {
+   char *str;
+   char buff[10];
+
+   printf("Enter name = ");
+   scanf("%s", buff);
+
+   str = malloc(sizeof(buff));
+
+   if (str == NULL) {
+      printf("Out of memory");
+      exit(1);
+   }
+
+   strcpy(str, buff);
+
+   return str;
+}
+
 void clear_screen() {
    printf("Press any key to continue ");
    while ((getchar()) != '\n');
@@ -42,12 +61,7 @@ void display_task() {
 void new_task() {
    system("clear");
 
-   char name[10];
-
-   printf("Enter Name = ");
-   scanf("%s", name);
-
-   strcpy(tasks[tasks_length].name, name);
+   strcpy(tasks[tasks_length].name, input_name());
    tasks[tasks_length].done = false;
 
    tasks_length++;
@@ -69,12 +83,7 @@ void edit_task() {
    system("clear");
 
    int selected_id = select_id();
-   char name[10];
-
-   printf("Enter Name = ");
-   scanf("%s", name);
-
-   strcpy(tasks[selected_id - 1].name, name);
+   strcpy(tasks[selected_id - 1].name, input_name());
 
    printf("Task updated successfully\n");
 }
