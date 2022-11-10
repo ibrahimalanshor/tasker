@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 struct Task {
-   char name[10];
+   char name[20];
    bool done;
 };
 struct Task tasks[5];
@@ -22,10 +22,10 @@ int select_id() {
 
 char *input_name() {
    char *str;
-   char buff[10];
+   char buff[20];
 
    printf("Enter name = ");
-   scanf("%s", buff);
+   scanf("%19s", buff);
 
    str = malloc(sizeof(buff));
 
