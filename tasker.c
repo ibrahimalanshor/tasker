@@ -17,6 +17,11 @@ int select_id() {
    printf("Select Id = ");
    scanf("%d", &selected_id);
 
+   if (selected_id < 1 || selected_id > tasks_length) {
+      printf("Out of length\n");
+      exit(1);
+   }
+
    return selected_id;
 }
 
@@ -30,7 +35,7 @@ char *input_name() {
    str = malloc(sizeof(buff));
 
    if (str == NULL) {
-      printf("Out of memory");
+      printf("Out of memory\n");
       exit(1);
    }
 
