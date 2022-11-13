@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <ctype.h>
+#include "tasker.h"
+#include "util.h"
 
 struct Task {
    char name[20];
@@ -23,39 +24,6 @@ int select_id() {
    }
 
    return selected_id;
-}
-
-char *input_name() {
-   char *str;
-   char buff[20];
-
-   printf("Enter name = ");
-   while ((getchar()) != '\n');
-   
-   if (fgets(buff, sizeof(buff), stdin) == NULL) {
-      printf("Out of stream\n");
-      exit(1);
-   }
-
-   str = malloc(sizeof(buff));
-
-   if (str == NULL) {
-      printf("Out of memory\n");
-      exit(1);
-   } else {
-      buff[strlen(buff) - 1] = '\0';
-   }
-
-   strcpy(str, buff);
-   
-   return str;
-}
-
-void clear_screen() {
-   printf("Press any key to continue ");
-   while ((getchar()) != '\n');
-   getchar();
-   system("clear");
 }
 
 void display_task() {
@@ -120,58 +88,4 @@ void delete_task() {
    tasks_length--;
 
    printf("Task deleted successfully\n");
-}
-
-int main() {
-   system("clear");
-
-   while (1) {  
-      int selected_menu;
-
-      printf("Menu List:\n1. Display Tasks\n2. New Task\n3. Toggle Done\n4. Edit Task\n5. Delete Task\n6. Exit\n");
-      printf("Select Menu = ");
-
-      scanf("%d", &selected_menu);
-
-      if (selected_menu == 6) {
-         break;
-      }
-
-      switch (selected_menu) {
-         case 1:
-            display_task();
-            clear_screen();
-
-            break;
-         case 2:
-            new_task();
-            clear_screen();
-
-            break;
-         case 3:
-            toggle_task();
-            clear_screen();
-
-            break;
-         case 4:
-            edit_task();
-            clear_screen();
-
-            break;
-         case 5:
-            delete_task();
-            clear_screen();
-
-            break;
-         default:
-            system("clear");
-            printf("Invalid Menu\n");
-            clear_screen();
-
-            break;
-      }
-   }
-
-
-   return 0;
 }
