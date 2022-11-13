@@ -8,7 +8,7 @@ struct Task {
    char name[20];
    bool done;
 };
-struct Task tasks[5];
+struct Task *tasks;
 int tasks_length;
 
 int select_id() {
@@ -65,7 +65,7 @@ void display_task() {
       printf("Empty Tasks\n");
    } else {
       for (int i = 0; i < tasks_length; i++) {
-         printf("%d. [%c] %s\n", i + 1, tasks[i].done ? 'x' : ' ', tasks[i].name);
+         printf("%d. [%c] %s\n", i + 1, (tasks + i)->done ? 'x' : ' ', (tasks + i)->name);
       }
    }
 }
@@ -73,8 +73,15 @@ void display_task() {
 void new_task() {
    system("clear");
 
-   strcpy(tasks[tasks_length].name, input_name());
-   tasks[tasks_length].done = false;
+   tasks = realloc(tasks, (tasks_length + 1) * sizeof(struct Task));
+
+   if (tasks == NULL) {
+      printf("Out of memoryn\n");
+      exit(1);
+   }
+
+   strcpy((tasks + tasks_length)->name, input_name());
+   (tasks + tasks_length)->done = false;
 
    tasks_length++;
 
@@ -86,7 +93,7 @@ void toggle_task() {
 
    int selected_id = select_id();
 
-   tasks[selected_id - 1].done = !tasks[selected_id - 1].done;
+   (tasks + (selected_id - 1))->done = !(tasks + (selected_id - 1))->done;
 
    printf("Task updated successfully\n");
 }
@@ -95,7 +102,7 @@ void edit_task() {
    system("clear");
 
    int selected_id = select_id();
-   strcpy(tasks[selected_id - 1].name, input_name());
+   strcpy((tasks + (selected_id - 1))->name, input_name());
 
    printf("Task updated successfully\n");
 }
@@ -106,7 +113,8 @@ void delete_task() {
    int selected_id = select_id();
 
    for (int i = selected_id - 1; i < tasks_length - 1; i++) {
-      tasks[i] = tasks[i + 1];
+      strcpy((tasks + i)->name, (tasks + i + 1)->name);
+      (tasks + i)->done = (tasks + i + 1)->done;
    }
 
    tasks_length--;
