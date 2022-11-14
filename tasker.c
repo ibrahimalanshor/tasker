@@ -9,8 +9,18 @@ struct Task {
    char name[20];
    bool done;
 };
+FILE *ftask;
 struct Task *tasks;
 int tasks_length;
+
+void sync_mem() {
+   tasks = realloc(tasks, (tasks_length + 1) * sizeof(struct Task));
+
+   if (tasks == NULL) {
+      printf("Out of memoryn\n");
+      exit(1);
+   }
+}
 
 int select_id() {
    int selected_id;
@@ -24,6 +34,27 @@ int select_id() {
    }
 
    return selected_id;
+}
+
+void load_task() {
+   ftask = fopen("tasks.txt", "a+");
+
+   if (ftask == NULL) {
+      printf("Error reading file\n");
+      exit(1);
+   }
+
+   int done;
+   char name[20];
+
+   while (fscanf(ftask, "%d%s", &done, name) != EOF) {
+      sync_mem();
+
+      strcpy((tasks + tasks_length)->name, name);
+      (tasks + tasks_length)->done = !!done;
+
+      tasks_length++;
+   }
 }
 
 void display_task() {
@@ -40,16 +71,12 @@ void display_task() {
 
 void new_task() {
    system("clear");
-
-   tasks = realloc(tasks, (tasks_length + 1) * sizeof(struct Task));
-
-   if (tasks == NULL) {
-      printf("Out of memoryn\n");
-      exit(1);
-   }
+   sync_mem();
 
    strcpy((tasks + tasks_length)->name, input_name());
    (tasks + tasks_length)->done = false;
+
+   fprintf(ftask, "%d %s\n", (tasks + tasks_length)->done ? 1 : 0, (tasks + tasks_length)->name);
 
    tasks_length++;
 

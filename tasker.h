@@ -1,3 +1,4 @@
+void load_task();
 void display_task();
 void new_task();
 void toggle_task();

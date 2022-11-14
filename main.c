@@ -6,6 +6,8 @@
 int main() {
    system("clear");
 
+   load_task();
+
    while (1) {  
       int selected_menu;
 
