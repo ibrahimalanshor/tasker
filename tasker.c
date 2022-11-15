@@ -95,7 +95,10 @@ void new_task() {
    strcpy((tasks + tasks_length)->name, input_name());
    (tasks + tasks_length)->done = false;
 
+   ftask = safe_fopen("tasks.txt", "a");
+   
    fprintf(ftask, "%d %s\n", (tasks + tasks_length)->done ? 1 : 0, (tasks + tasks_length)->name);
+   fclose(ftask);
 
    tasks_length++;
 
