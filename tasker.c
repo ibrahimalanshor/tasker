@@ -5,8 +5,10 @@
 #include "tasker.h"
 #include "util.h"
 
+#define NAME_LENGTH 20
+
 struct Task {
-   char name[20];
+   char name[NAME_LENGTH];
    bool done;
 };
 FILE *ftasks;
@@ -33,6 +35,32 @@ void sync_file() {
    fclose(ftasks);
 }
 
+char *input_name() {
+   char *str;
+   char buff[NAME_LENGTH];
+
+   printf("Enter name = ");
+   while ((getchar()) != '\n');
+   
+   if (fgets(buff, sizeof(buff), stdin) == NULL) {
+      printf("Out of stream\n");
+      exit(1);
+   }
+
+   str = malloc(sizeof(buff));
+
+   if (str == NULL) {
+      printf("Out of memory\n");
+      exit(1);
+   } else {
+      buff[strlen(buff) - 1] = '\0';
+   }
+
+   strcpy(str, buff);
+   
+   return str;
+}
+
 int select_id() {
    int selected_id;
 
@@ -51,7 +79,7 @@ void load_task() {
    ftasks = safe_fopen("tasks.txt", "r");
 
    int done;
-   char name[20];
+   char name[NAME_LENGTH];
 
    while (fscanf(ftasks, "%d %19[^\n]", &done, name) != EOF) {
       sync_mem();
