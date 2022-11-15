@@ -9,7 +9,7 @@ struct Task {
    char name[20];
    bool done;
 };
-FILE *ftask;
+FILE *ftasks;
 struct Task *tasks;
 int tasks_length;
 
@@ -20,6 +20,17 @@ void sync_mem() {
       printf("Out of memoryn\n");
       exit(1);
    }
+}
+
+void sync_file() {
+   clear_file("tasks.txt");
+   ftasks = safe_fopen("tasks.txt", "a");
+
+   for (int i = 0; i < tasks_length; i++) {
+      fprintf(ftasks, "%d %s\n", !!(tasks + i)->done, (tasks + i)->name);
+   }
+
+   fclose(ftasks);
 }
 
 int select_id() {
@@ -37,17 +48,12 @@ int select_id() {
 }
 
 void load_task() {
-   ftask = fopen("tasks.txt", "a+");
-
-   if (ftask == NULL) {
-      printf("Error reading file\n");
-      exit(1);
-   }
+   ftasks = safe_fopen("tasks.txt", "r");
 
    int done;
    char name[20];
 
-   while (fscanf(ftask, "%d%s", &done, name) != EOF) {
+   while (fscanf(ftasks, "%d%s", &done, name) != EOF) {
       sync_mem();
 
       strcpy((tasks + tasks_length)->name, name);
@@ -55,6 +61,8 @@ void load_task() {
 
       tasks_length++;
    }
+
+   fclose(ftasks);
 }
 
 void display_task() {
@@ -76,9 +84,9 @@ void new_task() {
    strcpy((tasks + tasks_length)->name, input_name());
    (tasks + tasks_length)->done = false;
 
-   fprintf(ftask, "%d %s\n", (tasks + tasks_length)->done ? 1 : 0, (tasks + tasks_length)->name);
-
    tasks_length++;
+
+   sync_file();
 
    printf("Task created succesfully\n");
 }
@@ -89,6 +97,8 @@ void toggle_task() {
    int selected_id = select_id();
 
    (tasks + (selected_id - 1))->done = !(tasks + (selected_id - 1))->done;
+   
+   sync_file();
 
    printf("Task updated successfully\n");
 }
@@ -98,6 +108,8 @@ void edit_task() {
 
    int selected_id = select_id();
    strcpy((tasks + (selected_id - 1))->name, input_name());
+
+   sync_file();
 
    printf("Task updated successfully\n");
 }
@@ -113,6 +125,8 @@ void delete_task() {
    }
 
    tasks_length--;
+
+   sync_file();
 
    printf("Task deleted successfully\n");
 }
