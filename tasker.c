@@ -56,12 +56,7 @@ int select_id() {
 }
 
 void load_task() {
-   ftask = fopen("tasks.txt", "a+");
-
-   if (ftask == NULL) {
-      printf("Error reading file\n");
-      exit(1);
-   }
+   ftask = safe_fopen("tasks.txt", "r");
 
    int done;
    char name[20];
@@ -74,6 +69,8 @@ void load_task() {
 
       tasks_length++;
    }
+
+   fclose(ftask);
 }
 
 void display_task() {
@@ -96,7 +93,7 @@ void new_task() {
    (tasks + tasks_length)->done = false;
 
    ftask = safe_fopen("tasks.txt", "a");
-   
+
    fprintf(ftask, "%d %s\n", (tasks + tasks_length)->done ? 1 : 0, (tasks + tasks_length)->name);
    fclose(ftask);
 
