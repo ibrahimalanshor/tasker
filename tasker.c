@@ -53,7 +53,7 @@ void load_task() {
    int done;
    char name[20];
 
-   while (fscanf(ftasks, "%d%s", &done, name) != EOF) {
+   while (fscanf(ftasks, "%d %19[^\n]", &done, name) != EOF) {
       sync_mem();
 
       strcpy((tasks + tasks_length)->name, name);
