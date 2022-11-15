@@ -10,6 +10,7 @@ struct Task {
    bool done;
 };
 FILE *ftask;
+FILE *temp;
 struct Task *tasks;
 int tasks_length;
 
@@ -20,6 +21,24 @@ void sync_mem() {
       printf("Out of memoryn\n");
       exit(1);
    }
+}
+
+void clear_file(char *filename) {
+   FILE *file;
+   file = fopen(filename, "w");
+   fclose(file);
+}
+
+FILE *safe_fopen(char *filename, char modes[2]) {
+   FILE *file;
+   file = fopen(filename, modes);
+
+   if (file == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+
+   return file;
 }
 
 int select_id() {
@@ -89,6 +108,36 @@ void toggle_task() {
    int selected_id = select_id();
 
    (tasks + (selected_id - 1))->done = !(tasks + (selected_id - 1))->done;
+
+   ftask = safe_fopen("tasks.txt", "r");
+   temp = safe_fopen("temp.txt", "w");
+
+   int line_num = 1;
+   int done;
+   char name[20];
+
+   while (fscanf(ftask, "%d%s", &done, name) != EOF) {
+      fprintf(temp, "%d %s\n", line_num == selected_id ? !done : done, name);
+
+      line_num++; 
+   }
+
+   fclose(ftask);
+   fclose(temp);
+
+   clear_file("tasks.txt"); 
+
+   ftask = safe_fopen("tasks.txt", "a");
+   temp = safe_fopen("temp.txt", "r");
+
+   while (fscanf(temp, "%d%s", &done, name) != EOF) {
+      fprintf(ftask, "%d %s\n", done, name);
+   }
+
+   fclose(ftask);
+   fclose(temp);
+   
+   clear_file("temp.txt");
 
    printf("Task updated successfully\n");
 }
