@@ -9,8 +9,7 @@ struct Task {
    char name[20];
    bool done;
 };
-FILE *ftask;
-FILE *temp;
+FILE *ftasks;
 struct Task *tasks;
 int tasks_length;
 
@@ -41,6 +40,17 @@ FILE *safe_fopen(char *filename, char modes[2]) {
    return file;
 }
 
+void sync_file() {
+   clear_file("tasks.txt");
+   ftasks = safe_fopen("tasks.txt", "a");
+
+   for (int i = 0; i < tasks_length; i++) {
+      fprintf(ftasks, "%d %s\n", !!(tasks + i)->done, (tasks + i)->name);
+   }
+
+   fclose(ftasks);
+}
+
 int select_id() {
    int selected_id;
 
@@ -56,12 +66,12 @@ int select_id() {
 }
 
 void load_task() {
-   ftask = safe_fopen("tasks.txt", "r");
+   ftasks = safe_fopen("tasks.txt", "r");
 
    int done;
    char name[20];
 
-   while (fscanf(ftask, "%d%s", &done, name) != EOF) {
+   while (fscanf(ftasks, "%d%s", &done, name) != EOF) {
       sync_mem();
 
       strcpy((tasks + tasks_length)->name, name);
@@ -70,7 +80,7 @@ void load_task() {
       tasks_length++;
    }
 
-   fclose(ftask);
+   fclose(ftasks);
 }
 
 void display_task() {
@@ -92,12 +102,9 @@ void new_task() {
    strcpy((tasks + tasks_length)->name, input_name());
    (tasks + tasks_length)->done = false;
 
-   ftask = safe_fopen("tasks.txt", "a");
-
-   fprintf(ftask, "%d %s\n", (tasks + tasks_length)->done ? 1 : 0, (tasks + tasks_length)->name);
-   fclose(ftask);
-
    tasks_length++;
+
+   sync_file();
 
    printf("Task created succesfully\n");
 }
@@ -108,36 +115,8 @@ void toggle_task() {
    int selected_id = select_id();
 
    (tasks + (selected_id - 1))->done = !(tasks + (selected_id - 1))->done;
-
-   ftask = safe_fopen("tasks.txt", "r");
-   temp = safe_fopen("temp.txt", "w");
-
-   int line_num = 1;
-   int done;
-   char name[20];
-
-   while (fscanf(ftask, "%d%s", &done, name) != EOF) {
-      fprintf(temp, "%d %s\n", line_num == selected_id ? !done : done, name);
-
-      line_num++; 
-   }
-
-   fclose(ftask);
-   fclose(temp);
-
-   clear_file("tasks.txt"); 
-
-   ftask = safe_fopen("tasks.txt", "a");
-   temp = safe_fopen("temp.txt", "r");
-
-   while (fscanf(temp, "%d%s", &done, name) != EOF) {
-      fprintf(ftask, "%d %s\n", done, name);
-   }
-
-   fclose(ftask);
-   fclose(temp);
    
-   clear_file("temp.txt");
+   sync_file();
 
    printf("Task updated successfully\n");
 }
@@ -147,6 +126,8 @@ void edit_task() {
 
    int selected_id = select_id();
    strcpy((tasks + (selected_id - 1))->name, input_name());
+
+   sync_file();
 
    printf("Task updated successfully\n");
 }
@@ -162,6 +143,8 @@ void delete_task() {
    }
 
    tasks_length--;
+
+   sync_file();
 
    printf("Task deleted successfully\n");
 }
