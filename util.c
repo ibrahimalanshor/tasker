@@ -34,3 +34,21 @@ void clear_screen() {
    getchar();
    system("clear");
 }
+
+void clear_file(char *filename) {
+   FILE *file;
+   file = fopen(filename, "w");
+   fclose(file);
+}
+
+FILE *safe_fopen(char *filename, char modes[2]) {
+   FILE *file;
+   file = fopen(filename, modes);
+
+   if (file == NULL) {
+      printf("Error opening file\n");
+      exit(1);
+   }
+
+   return file;
+}

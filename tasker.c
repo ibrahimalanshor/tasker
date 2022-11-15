@@ -22,24 +22,6 @@ void sync_mem() {
    }
 }
 
-void clear_file(char *filename) {
-   FILE *file;
-   file = fopen(filename, "w");
-   fclose(file);
-}
-
-FILE *safe_fopen(char *filename, char modes[2]) {
-   FILE *file;
-   file = fopen(filename, modes);
-
-   if (file == NULL) {
-      printf("Error opening file\n");
-      exit(1);
-   }
-
-   return file;
-}
-
 void sync_file() {
    clear_file("tasks.txt");
    ftasks = safe_fopen("tasks.txt", "a");
